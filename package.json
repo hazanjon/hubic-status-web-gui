@@ -1,0 +1,12 @@
+{
+	"name": "hubic-webstatus",
+	"description": "Web interface to display Hubic's sync",
+	"version": "0.1",
+	"author": {
+		"name": "Jon Hazan",
+		"email": "jon@hazan.me"
+	},
+	"dependencies": {
+		"express": "3.*",	
+	}
+}
