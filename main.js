@@ -185,6 +185,29 @@ hubic.parseStatus = function(error, stdout, stderr){
 	hubic.status.queue.misc.size = parseSingle(/Misc: [0-9]+ \(([0-9\.]+ [KMG]?B)\)/);
 	hubic.status.queue.misc.running = parseSingle(/Misc: .+\+ ([0-9]+) running/);
 	
+	var operationregex = /(Upload|Download|Misc) for (.*\/)([^\/]*) \(([0-9\.]+ [KMG]?B)\/([0-9\.]+ [KMG]?B)\)/g;
+	var opmatchs;
+	while (opmatchs = operationregex.exec(stdout)){	
+		var opgroup = hubic.status.operations[opmatchs[1].toLowerCase()];
+		
+		var found = false;
+	    for(var i = 0; i < opgroup.length; i++) {
+	        if (opgroup[i].dir == opmatchs[2] && opgroup[i].file == opmatchs[3]){
+	        	opgroup[i].progress = opmatchs[4];
+	        	found = true;
+	        	break;
+	        }
+	    }
+	    
+	    if(!found)
+			opgroup.push({
+				dir: opmatchs[2],
+				file: opmatchs[3],
+				progress: opmatchs[4],
+				size: opmatchs[5]
+			});
+	}
+	// For file parsing: ^(.*/)([^/]*)$
 	//console.log(stdout);
 	console.log(hubic.status);
 	
