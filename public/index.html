@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="./config.js"></script>
+		<script src="http://js.pusher.com/2.1/pusher.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-min.js"></script>
+	</head>
+	<body>
+		<h1>Hubic Status</h1>
+		
+		<!-- ko with: status -->
+			<div>
+				Account: <span data-bind="text: account"></span>
+			</div>
+			<div>
+				Space Used: <span data-bind="text: spaceUsed"></span>
+			</div>
+			<div>
+				Sync Dir: <span data-bind="text: syncDir"></span>
+			</div>
+			<div>
+				Upload Speed: <span data-bind="text: speed.upload"></span>
+			</div>
+			<div>
+				Download Speed: <span data-bind="text: speed.download"></span>
+			</div>
+		<!-- /ko -->
+		
+		
+		
+		
+		
+		<script>
+			var pusher = new Pusher(config.pusherAppId);
+			var channel = pusher.subscribe('status_channel');
+			
+			var hubic = hubic || {};
+			
+			var viewModel = function(){
+				self = this;
+				self.status = ko.observable();
+			}
+			
+			hubic.vm = new viewModel();
+			
+			channel.bind('status_update', function(data) {
+				hubic.vm.status(data);
+				console.log(data);
+			});
+			
+			ko.applyBindings(hubic.vm);
+		</script>
+	</body>
+	
+</html>

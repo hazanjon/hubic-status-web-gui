@@ -258,9 +258,9 @@ setInterval(hubic.getStatus, 2000);
 
 //Web Interface
 
-app.get('/', function(req, res){
-	res.send('Hello World');
-	console.log('Show page');
+
+app.configure(function(){
+  app.use(express.static(__dirname + '/public'));
 });
 
 app.listen(3030);
