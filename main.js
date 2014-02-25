@@ -1,11 +1,16 @@
+//Required
+var config = require('./config.json');
 var express = require('express');
 var sys = require('sys')
 var exec = require('child_process').exec;
 var env = process.env;
+var Pusher = require('pusher');
+
+//Config
+var pusher = new Pusher(config.pusher);
+var app = express();
 
 //TODO: be able to pass in a custom BUS_ADDRESS
-
-var app = express();
 
 var status = {};
 
@@ -242,12 +247,16 @@ hubic.parseStatus = function(error, stdout, stderr){
 	        [24/02/2014 01:41:40|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
 	        [24/02/2014 01:51:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
 	*/
+	hubic.pushStatus();
+}
+hubic.pushStatus = function(){
+	pusher.trigger('status_channel', 'status_update', hubic.status);
 }
 
-
-
-
 setInterval(hubic.getStatus, 2000);
+
+
+//Web Interface
 
 app.get('/', function(req, res){
 	res.send('Hello World');
