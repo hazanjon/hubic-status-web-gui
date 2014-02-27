@@ -6,9 +6,10 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-min.js"></script>
 	</head>
 	<body>
-		<h1>Hubic Status</h1>
 		
 		<!-- ko with: status -->
+			<h1>Hubic Status</h1>
+		
 			<div>
 				Account: <span data-bind="text: account"></span>
 			</div>
@@ -18,16 +19,51 @@
 			<div>
 				Sync Dir: <span data-bind="text: syncDir"></span>
 			</div>
-			<div>
-				Upload Speed: <span data-bind="text: speed.upload"></span>
-			</div>
-			<div>
-				Download Speed: <span data-bind="text: speed.download"></span>
-			</div>
+		
+		
+			<h1>Uploads</h1>
+			
+			<!-- ko with: upload -->
+				<div>
+					Upload Speed: <span data-bind="text: speed"></span>
+				</div>
+				<div>
+					Queue Count: <span data-bind="text: queue.count"></span><br />
+					Queue Size: <span data-bind="text: queue.size"></span>
+				</div>
+				
+				<h3>Queue</h3>
+				<!-- ko if: operations.length == 0 -->
+					Queue Empty
+				<!-- /ko -->
+				<div data-bind="foreach: operations">
+					<span data-bind="text: dir"></span><span data-bind="text: file"></span> (<span data-bind="text: progress"></span>/<span data-bind="text: size"></span>)<br />
+				</div>
+			<!-- /ko -->
+		
+			<h1>Downloads</h1>
+			
+			<!-- ko with: download -->
+				<div>
+					Upload Speed: <span data-bind="text: speed"></span>
+				</div>
+				<div>
+					Queue Count: <span data-bind="text: queue.count"></span><br />
+					Queue Size: <span data-bind="text: queue.size"></span>
+				</div>
+				
+				<h3>Queue</h3>
+				
+				<!-- ko if: operations.length == 0 -->
+					Queue Empty
+				<!-- /ko -->
+				<div data-bind="foreach: operations">
+					<span data-bind="text: file"></span><br />
+				</div>
+			<!-- /ko -->
+		
+		
 		<!-- /ko -->
-		
-		
-		
 		
 		
 		<script>

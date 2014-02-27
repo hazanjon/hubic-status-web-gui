@@ -104,40 +104,59 @@ var hubic = {
 		account: '',
 		syncDir: '',
 		state: '',
-		speed: {
-			upload: 0,
-			download: 0	
-		},
-		queue: {
-			upload: {
+		upload: {
+			speed: 0,
+			queue: {
 				count: 0,
 				size: '',
 				running: 0	
 			},
-			download: {
+			operations:[
+				/*
+				{
+					dir: '',
+					file: '',
+					progress: '',
+					size: ''
+				}
+				*/
+			]
+		},
+		download: {
+			speed: 0,
+			queue: {
 				count: 0,
 				size: '',
 				running: 0	
 			},
-			misc: {
+			operations:[
+				/*
+				{
+					dir: '',
+					file: '',
+					progress: '',
+					size: ''
+				}
+				*/
+			]
+		},
+		misc: {
+			speed: 0,
+			queue: {
 				count: 0,
 				size: '',
 				running: 0	
-			}
-		},
-		operations: {
-			upload: [
-			/*
-			{
-				dir: '',
-				file: '',
-				progress: '',
-				size: ''
-			}
-			*/
-			],
-			download: [],
-			misc: []
+			},
+			operations:[
+				/*
+				{
+					dir: '',
+					file: '',
+					progress: '',
+					size: ''
+				}
+				*/
+			]
 		},
 		events: [
 			/*
@@ -171,29 +190,29 @@ hubic.parseStatus = function(error, stdout, stderr){
 	
 	hubic.status.state = parseSingle(/State: ([\w]+)/);
 	hubic.status.account = parseSingle(/Account: ([\w@]+)/);
-	hubic.status.speed.upload = parseSingle(/Up: ([0-9\.]+ [KMG]?B\/s)/);
-	hubic.status.speed.download = parseSingle(/Down: ([0-9\.]+ [KMG]?B\/s)/);
 	hubic.status.syncDir = parseSingle(/Synchronized directory: (.+)\n/);
 	hubic.status.spaceUsed = parseSingle(/Usage: ([0-9\.]+ [KMG]B)/);
 	hubic.status.maxSpace = parseSingle(/Usage: [0-9\.]+ [KMG]?B\/([\-0-9\.]+ [KMG]?B)/);
 	hubic.status.maxSpace = parseSingle(/Usage: [0-9\.]+ [KMG]?B\/([\-0-9\.]+ [KMG]?B)/);
 	
-	hubic.status.queue.upload.count = parseSingle(/Uploads: ([0-9]+)/);
-	hubic.status.queue.upload.size = parseSingle(/Uploads: [0-9]+ \(([0-9\.]+ [KMG]?B)\)/);
-	hubic.status.queue.upload.running = parseSingle(/Uploads: .+\+ ([0-9]+) running/);
+	hubic.status.upload.speed = parseSingle(/Up: ([0-9\.]+ [KMG]?B\/s)/);
+	hubic.status.upload.queue.count = parseSingle(/Uploads: ([0-9]+)/);
+	hubic.status.upload.queue.size = parseSingle(/Uploads: [0-9]+ \(([0-9\.]+ [KMG]?B)\)/);
+	hubic.status.upload.queue.running = parseSingle(/Uploads: .+\+ ([0-9]+) running/);
 	
-	hubic.status.queue.download.count = parseSingle(/Downloads: ([0-9]+)/);
-	hubic.status.queue.download.size = parseSingle(/Downloads: [0-9]+ \(([0-9\.]+ [KMG]?B)\)/);
-	hubic.status.queue.download.running = parseSingle(/Downloads: .+\+ ([0-9]+) running/);
+	hubic.status.download.speed = parseSingle(/Down: ([0-9\.]+ [KMG]?B\/s)/);
+	hubic.status.download.queue.count = parseSingle(/Downloads: ([0-9]+)/);
+	hubic.status.download.queue.size = parseSingle(/Downloads: [0-9]+ \(([0-9\.]+ [KMG]?B)\)/);
+	hubic.status.download.queue.running = parseSingle(/Downloads: .+\+ ([0-9]+) running/);
 	
-	hubic.status.queue.misc.count = parseSingle(/Misc: ([0-9]+)/);
-	hubic.status.queue.misc.size = parseSingle(/Misc: [0-9]+ \(([0-9\.]+ [KMG]?B)\)/);
-	hubic.status.queue.misc.running = parseSingle(/Misc: .+\+ ([0-9]+) running/);
+	hubic.status.misc.queue.count = parseSingle(/Misc: ([0-9]+)/);
+	hubic.status.misc.queue.size = parseSingle(/Misc: [0-9]+ \(([0-9\.]+ [KMG]?B)\)/);
+	hubic.status.misc.queue.running = parseSingle(/Misc: .+\+ ([0-9]+) running/);
 	
 	var operationregex = /(Upload|Download|Misc) for (.*\/)([^\/]*) \(([0-9\.]+ [KMG]?B)\/([0-9\.]+ [KMG]?B)\)/g;
 	var opmatchs;
 	while (opmatchs = operationregex.exec(stdout)){	
-		var opgroup = hubic.status.operations[opmatchs[1].toLowerCase()];
+		var opgroup = hubic.status[opmatchs[1].toLowerCase()].operations;
 		
 		var found = false;
 	    for(var i = 0; i < opgroup.length; i++) {
