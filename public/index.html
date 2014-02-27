@@ -1,71 +1,129 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="style.css">
+		
 		<script src="./config.js"></script>
 		<script src="http://js.pusher.com/2.1/pusher.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-min.js"></script>
 	</head>
 	<body>
+		<div class="page-header">
+			<h1>Hubic Status GUI</h1>
+		</div>
 		
 		<!-- ko with: status -->
-			<h1>Hubic Status</h1>
-		
-			<div>
-				Account: <span data-bind="text: account"></span>
-			</div>
-			<div>
-				Space Used: <span data-bind="text: spaceUsed"></span>
-			</div>
-			<div>
-				Sync Dir: <span data-bind="text: syncDir"></span>
-			</div>
 		
 		
-			<h1>Uploads</h1>
-			
-			<!-- ko with: upload -->
-				<div>
-					Upload Speed: <span data-bind="text: speed"></span>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">General</h3>
 				</div>
-				<div>
-					Queue Count: <span data-bind="text: queue.count"></span><br />
-					Queue Size: <span data-bind="text: queue.size"></span>
+				<div class="panel-body">
+					<div>
+						Account: <span data-bind="text: account"></span>
+					</div>
+					<div>
+						Space Used: <span data-bind="text: spaceUsed"></span>
+					</div>
+					<div>
+						Sync Dir: <span data-bind="text: syncDir"></span>
+					</div>
 				</div>
 				
-				<h3>Queue</h3>
-				<!-- ko if: operations.length == 0 -->
-					Queue Empty
-				<!-- /ko -->
-				<div data-bind="foreach: operations">
-					<span data-bind="text: dir"></span><span data-bind="text: file"></span> (<span data-bind="text: progress"></span>/<span data-bind="text: size"></span>)<br />
+			</div>
+		
+		
+			<!-- ko with: upload -->
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Uploads</h3>
 				</div>
+				<div class="panel-body">
+					<div>
+						Upload Speed: <span data-bind="text: speed"></span>
+					</div>
+					<div>
+						Queue Count: <span data-bind="text: queue.count"></span><br />
+						Queue Size: <span data-bind="text: queue.size"></span>
+					</div>
+				</div>
+				
+				<!-- ko if: operations.length > 0 -->
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>File</th>
+							<th>Dir</th>
+							<th>Transfered</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach: operations">
+						<tr>
+							<td data-bind="text: file"></td>
+							<td data-bind="text: dir"></td>
+							<td data-bind="text: progress"></td>
+							<td data-bind="text: size"></td>
+							<!--<div class="progress progress-striped active">
+								<div class="progress-bar" data-bind="style: {width: ((progress / size) * 100) + '50%'}">
+								</div>
+							</div>-->
+						</tr>
+					</tbody>
+				</table>
+				<!-- /ko -->
+			</div>
 			<!-- /ko -->
 		
-			<h1>Downloads</h1>
-			
+		
 			<!-- ko with: download -->
-				<div>
-					Upload Speed: <span data-bind="text: speed"></span>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">Downloads</h3>
 				</div>
-				<div>
-					Queue Count: <span data-bind="text: queue.count"></span><br />
-					Queue Size: <span data-bind="text: queue.size"></span>
+				<div class="panel-body">
+					<div>
+						Upload Speed: <span data-bind="text: speed"></span>
+					</div>
+					<div>
+						Queue Count: <span data-bind="text: queue.count"></span><br />
+						Queue Size: <span data-bind="text: queue.size"></span>
+					</div>
 				</div>
 				
-				<h3>Queue</h3>
-				
-				<!-- ko if: operations.length == 0 -->
-					Queue Empty
+				<!-- ko if: operations.length > 0 -->
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>File</th>
+							<th>Dir</th>
+							<th>Transfered</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+					<tbody data-bind="foreach: operations">
+						<tr>
+							<td data-bind="text: file"></td>
+							<td data-bind="text: dir"></td>
+							<td data-bind="text: progress"></td>
+							<td data-bind="text: size"></td>
+							<!--<div class="progress progress-striped active">
+								<div class="progress-bar" data-bind="style: {width: ((progress / size) * 100) + '50%'}">
+								</div>
+							</div>-->
+						</tr>
+					</tbody>
+				</table>
 				<!-- /ko -->
-				<div data-bind="foreach: operations">
-					<span data-bind="text: file"></span><br />
-				</div>
+			</div>
 			<!-- /ko -->
 		
 		
 		<!-- /ko -->
-		
-		
+				
 		<script>
 			var pusher = new Pusher(config.pusherAppId);
 			var channel = pusher.subscribe('status_channel');
