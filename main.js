@@ -14,7 +14,6 @@ var app = express();
 
 var status = {};
 
-//dbus-daemon --print-address --session
 var dbusLaunchInProgress = false;
 var dbusLaunch = function(){
 	var self = this;
@@ -34,47 +33,6 @@ var dbusLaunch = function(){
 		
 	}
 };
-/*
-
-var dbus = {
-	sessionAddress: process.env.DBUS_SESSION_BUS_ADDRESS,
-	exported: false
-};
-dbus.exportSessionAddress = function(){
-	var self = this;
-	exec("export " + self.sessionAddress, function (error, stdout, stderr) {
-		console.log('Out:', stdout);
-
-		console.log('Error:', stderr);
-		self.exported = true;
-		return true;
-	});
-};
-dbus.getSessionAddress = function(){
-	var self = this;
-	
-	exec("echo $DBUS_SESSION_BUS_ADDRESS", function (error, stdout, stderr) {
-		console.log('Error:', stderr);
-	console.log('match');
-		var matches = stdout.match(/DBUS_SESSION_BUS_ADDRESS='unix:abstract=\/tmp\/dbus-([\w]+),guid=([\w]+)'/);
-		
-			console.log(matches[0]);
-		if(matches.length > 0){
-			self.sessionAddress = matches[0];
-			self.exportSessionAddress();
-			return true;	
-		}
-		
-		return false;
-	});
-};
-dbus.launch = function(){
-	var self = this;
-	console.log('getadd');
-	exec("eval `dbus-launch --sh-syntax`", function (error, stdout, stderr) {
-		console.log('Error:', stderr);
-	});
-};*/
 
 var hubicErrorHandling = [
 	{
@@ -129,16 +87,7 @@ var hubic = {
 				size: '',
 				running: 0	
 			},
-			operations:[
-				/*
-				{
-					dir: '',
-					file: '',
-					progress: '',
-					size: ''
-				}
-				*/
-			]
+			operations:[]
 		},
 		misc: {
 			speed: 0,
@@ -147,16 +96,7 @@ var hubic = {
 				size: '',
 				running: 0	
 			},
-			operations:[
-				/*
-				{
-					dir: '',
-					file: '',
-					progress: '',
-					size: ''
-				}
-				*/
-			]
+			operations:[]
 		},
 		events: [
 			/*
@@ -231,52 +171,19 @@ hubic.parseStatus = function(error, stdout, stderr){
 				size: opmatchs[5]
 			});
 	}
-	// For file parsing: ^(.*/)([^/]*)$
-	//console.log(stdout);
+	
 	console.log(hubic.status);
 	
-	
-	/*
-	State: Busy
-	Up: 1.1 MB/s (0 B/s)    Down: 0 B/s (0 B/s)
-
-	Account: hazanjon@hotmail.com
-	Synchronized directory: /media/angel/
-	Usage: 140.84 GB/-1 B
-
-	Queue:
-	        Uploads: 539 (859.83 GB) + 3 running
-	        Downloads: 0 (0 B) + 0 running
-	        Misc: 0 + 0 running
-
-	Running operations:
-	        Upload for /media/angel/Films/Dead_Snow (2009)/deadsnow1080-cls.mkv (899.78 MB/7.95 GB)
-	        Upload for /media/angel/Films/USS Seaviper (2012).m4v (278.5 MB/599.72 MB)
-	        Upload for /media/angel/Films/Pirates-Of-The-Caribbean-At-Worlds-End-2007.mkv (549.78 MB/599.66 MB)
-
-	Last events:
-	        [24/02/2014 00:21:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 00:31:40|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 00:41:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 00:51:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 01:01:40|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 01:11:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 01:21:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 01:31:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 01:41:40|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	        [24/02/2014 01:51:41|Warning] Can not synchronise /media/angel/: Stale NFS file handle [ESTALE].. Will retry later.
-	*/
 	hubic.pushStatus();
 }
+
 hubic.pushStatus = function(){
 	pusher.trigger('status_channel', 'status_update', hubic.status);
 }
 
 setInterval(hubic.getStatus, 2000);
 
-
 //Web Interface
-
 
 app.configure(function(){
   app.use(express.static(__dirname + '/public'));
